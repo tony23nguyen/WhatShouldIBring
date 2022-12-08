@@ -20,10 +20,16 @@ function App() {
   const [firstLetter, setFirstLetter] = useState(0);
   const [name, setName] = useState(0);
 
+  //for deployment
+  const endPoint = "https://whatshouldibring.onrender.com";
+
+  //for testing
+  //const endPoint = "http://localhost:5000";
+
   const getDishes = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/json/v1/1/search.php?f=${firstLetter}`
+        `${endPoint}/api/json/v1/1/search.php?f=${firstLetter}`
       );
 
       setMeals(response.data);
@@ -32,9 +38,7 @@ function App() {
 
   const getRandom = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:5000/api/json/v1/1/random.php`
-      );
+      const response = await axios.get(`${endPoint}/api/json/v1/1/random.php`);
 
       setMeals(response.data);
     } catch (error) {}
