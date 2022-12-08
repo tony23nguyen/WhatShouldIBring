@@ -5,70 +5,77 @@ import {
   FormLabel,
   Heading,
   Input,
-  Table,
   Text,
-  Th,
-  Tr,
-  Thead,
-  TableContainer,
-  Td,
-  Tfoot,
-  Tbody,
-  TableCaption,
-  Stack,
   Flex,
   Spacer,
   Center,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
-import RecipeList from "./components/RecipeList";
+import RecipeCard from "./components/RecipeCard";
 
 function App() {
-  const [dish, setDish] = useState();
-  const [firstLetter, setFirstLetter] = useState();
-  const [name, setName] = useState();
+  const [meals, setMeals] = useState();
+  const [firstLetter, setFirstLetter] = useState(0);
+  const [name, setName] = useState(0);
 
   const getDishes = async () => {
     try {
-      const config = {
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          credentials: true,
-        },
-      };
-      const { data } = await axios.get(
-        `http://localhost:5000/getData/${firstLetter}`
+      const response = await axios.get(
+        `http://localhost:5000/api/json/v1/1/search.php?f=${firstLetter}`
       );
-      setDish(data);
-      console.log(data);
+
+      setMeals(response.data);
     } catch (error) {}
   };
 
   const handleClick = async () => {
-    await setFirstLetter(name[0]);
-    getDishes();
+    await getDishes();
   };
+
+  // useEffect(() => {
+  //   // Check if meals is defined
+  //   if (meals) {
+  //     // Log the value of meals.meals
+  //     console.log(meals.meals);
+  //   }
+  // }, [meals]);
 
   const handleChange = (event) => {
     setName(event.target.value);
+    setFirstLetter(name[0]);
   };
-  console.log();
   return (
     <>
-      <Box className="App-header">
-        <Box border="10px" className="AlignText">
-          <Heading className="AlignText" as="h1" size="2xl">
+      <Box
+        className="App-header"
+        display={"flex"}
+        flexDirection="column"
+        justifyContent={"center"}
+        alignItems="center"
+      >
+        <Box border="10px">
+          <Heading className="AlignText" as="h1" size="2xl" p={10}>
             What Should I Bring?
           </Heading>
-          <Text fontSize="2xl" m={2} p={5}>
-            Going to a 'bring a dish that starts with the first letter of your
-            name' themed potluck and don't know what to bring?
+          <Text fontSize="xl" m={10} p={10} className="AlignText" w="50%">
+            If you're attending a potluck with a fun "bring a dish that starts
+            with the first letter of your name" theme, you may be wondering what
+            to bring. There are many delicious and creative dishes you can
+            prepare that will fit the theme and impress your fellow potluckers.
+            Here are a few ideas to get you started:
           </Text>
         </Box>
 
-        <FormControl p={5} m={2} isRequired>
+        <FormControl
+          p={5}
+          display="flex"
+          flexDirection={"column"}
+          justifyContent="center"
+          w={["60%"]}
+          isRequired
+        >
           <FormLabel> Your Name</FormLabel>
           <Input type="text" size="sm" id="name" onChange={handleChange} />
           <Button
@@ -83,20 +90,11 @@ function App() {
             Submit
           </Button>
         </FormControl>
-        <Flex direction={["column", "row"]} spacing="24px" m="2px" p="2px">
-          <Center w="20%" h="40px">
-            Dish Name
-          </Center>
-          <Spacer />
-          <Center w="20%" h="40px">
-            Description
-          </Center>
-          <Spacer />
-          <Center w="20%" h="40px">
-            Full Recipe
-          </Center>
-        </Flex>
-        <RecipeList></RecipeList>
+        {meals && (
+          <>
+            <RecipeCard meals={meals && meals.meals} />
+          </>
+        )}
       </Box>
     </>
   );

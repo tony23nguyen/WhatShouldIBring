@@ -1,33 +1,25 @@
 const express = require("express");
-const cors = require("cors");
-const fetch = require("node-fetch");
+const { createProxyMiddleware } = require("http-proxy-middleware");
+const path = require("path");
 
-const PORT = 5000;
 const app = express();
 
-//allows access from a port
-app.use(cors());
-const corsOptions = {
-  origin: "http://localhost:3000",
-};
+app.use(
+  "/api",
+  createProxyMiddleware({
+    target: "https://www.themealdb.com/",
+    changeOrigin: true,
+  })
+);
+app.use(express.static(path.join(__dirname, "client/build")));
 
-//end point of request
-const requestEndpoint = `http://themealdb.com/api/json/v1/1/search.php?f=${firstLetter}`;
-
-app.get("/getData/", cors(corsOptions), async (req, res) => {
-  const fetchOptions = {
-    method: "GET",
-  };
-  const response = await fetch(requestEndpoint, fetchOptions);
-  const data = await response.json();
-
-  let recipes = {};
-  data.meals.forEach(function (item) {
-    recipes[item.idMeal] = item.strMeal;
-  });
-  res.json(recipes);
+// The "catchall" handler: for any request that doesn't
+// match one above, send back React's index.html file.
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname + "/potluckapp/frontend/build/index.html"));
 });
 
-app.listen(PORT, () => {
-  console.log(`listening at http://localhost:${PORT}`);
-});
+const port = process.env.PORT || 5000;
+app.listen(port);
+
+console.log(`Server listening on ${port}`);
