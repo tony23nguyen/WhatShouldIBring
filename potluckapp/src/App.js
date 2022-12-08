@@ -30,6 +30,16 @@ function App() {
     } catch (error) {}
   };
 
+  const getRandom = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/json/v1/1/random.php`
+      );
+
+      setMeals(response.data);
+    } catch (error) {}
+  };
+
   const handleClick = async () => {
     await getDishes();
   };
@@ -55,11 +65,11 @@ function App() {
         justifyContent={"center"}
         alignItems="center"
       >
-        <Box border="10px">
+        <Box>
           <Heading className="AlignText" as="h1" size="2xl" p={10}>
             What Should I Bring?
           </Heading>
-          <Text fontSize="xl" m={10} p={10} className="AlignText" w="50%">
+          <Text fontSize="xl" m={2} p={10} className="AlignText">
             If you're attending a potluck with a fun "bring a dish that starts
             with the first letter of your name" theme, you may be wondering what
             to bring. There are many delicious and creative dishes you can
@@ -78,17 +88,32 @@ function App() {
         >
           <FormLabel> Your Name</FormLabel>
           <Input type="text" size="sm" id="name" onChange={handleChange} />
-          <Button
-            size="md"
-            height="30px"
-            width="100px"
-            border="2px"
-            colorScheme={"blue"}
-            marginTop="4px"
-            onClick={handleClick}
-          >
-            Submit
-          </Button>
+          <Box flexDirection={"row"}>
+            <Button
+              size="md"
+              height="30px"
+              width="100px"
+              border="2px"
+              colorScheme={"blue"}
+              marginTop="4px"
+              onClick={handleClick}
+              m="5px"
+            >
+              Get Meals
+            </Button>
+            <Button
+              size="md"
+              height="30px"
+              width="100px"
+              border="2px"
+              colorScheme={"blue"}
+              marginTop="4px"
+              onClick={getRandom}
+              m="5px"
+            >
+              Suprise Me
+            </Button>
+          </Box>
         </FormControl>
         {meals && (
           <>
